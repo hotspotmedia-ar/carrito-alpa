@@ -2,23 +2,16 @@
   <div class="home" style="padding-top:60px;" ref="home">
    
    
-    <div class="row filter-bar" v-if="this.boolShowFilters">
-      <div class="col-6" style="padding-right:5px;">
-        <input class="form-control" type="text" placeholder="Buscar..." v-model="searchText" style="text-align:center;" v-on:input="searchQuery = $event.target.value"/>
+    <div class="filter-bar">
+        <div class="row" style="margin-right: 15px;margin-left: -5px;">
+          <input class="form-control" type="text" placeholder="Buscar..." v-model="searchTextInput" @keyup.delete="searchText.slice(0, -1)" style="text-align:center;"/>
+        </div>
       </div>
-      <div class="col-6" style="padding-left:5px;">
-        <select class="form-control" placeholder="asd" v-model="searchCategory" style="text-align: center;text-align-last: center;-moz-text-align-last: center;">
-          <option value="" disabled selected hidden>Categorías</option>
-          <option value="">TODAS</option>
-          <option v-for="category in this.categories" :key="category" :value="category">{{category}}</option>
-        </select>
-      </div>
-    </div>
    
 
 
 
-    <div class="row" style="padding: 10px;" :style="{ 'paddingTop': this.boolShowFilters? '70px' : '10px' }">
+    <!-- <div class="row" style="padding: 10px;paddingTop:70px">
       <div class="col-lg-2 col-md-3 col-sm-4 col-6" style="padding-right: 5px; padding-left: 5px;" v-for="product in filteredProducts" :key="product.id">
         <figure class="card card-product-grid" @click="showAddToCartModal(product)">
           <div class="img-wrap">
@@ -29,26 +22,52 @@
             <p class="text-uppercase font-weight-bolder category">{{product.categoria}}</p>
             <p><a href="#" class=" title">{{product.name}}</a></p>
           </figcaption>
-        </figure> <!-- card // -->
+        </figure>
+      </div>
+    </div> -->
+
+    <div v-if="this.searchCategory !== ''" style="padding: 70px 20px 20px; align-items: center;" class="row">
+      <div class="col-1">
+        <button class="btn btn-sm btn-outline-danger" @click="searchCategory = ''">
+          <font-awesome-icon icon="times" class=""></font-awesome-icon>
+        </button>
+      </div>
+      <div class="col-10" style="margin-left: 15px; text-align: left;">
+        <p style="margin-bottom: 0;font-size: 11pt;">Categoría</p>
+        <p style="margin-bottom: 0;font-size: 12pt;font-weight: 600;">{{this.searchCategory}}</p>
       </div>
     </div>
 
+    <div class="row" :style="{'padding': '20px', 'paddingTop': (this.searchCategory == '') ? '70px' : '0px'}" v-if="this.filteredProducts.length > 0">
+        <ul class="list-group" style="width: 100%;">
+          <li class="list-group-item" v-for="product in filteredProducts" :key="product.id" @click="showAddToCartModal(product)" style="padding: 0;margin: 0;">
+            <p class="font-weight-bolder product-id" style="text-align: left;padding-left: 20px;">#{{product.id}}</p>
+            <p class="text-uppercase font-weight-bolder category" style="text-align: left;padding-left: 20px;">{{product.categoria}}</p>
+            <p style="text-align: left;padding-left: 20px;"><a href="#" class="title">{{product.name}}</a></p>
+          </li>
+        </ul>
+    </div>
+
+    <div v-else class="row" style="height: 100vh;flex-direction: column;justify-content: center;align-content: center;align-items: center;color:#aaa;" :style="{ 'marginTop': (this.searchCategory == '') ? '-50px' : '-185px' }">
+      <font-awesome-icon icon="times-circle" size="2x" />
+      <p class="align-self-center" style="margin-top: 15px; font-size: 18px;">No se encontraron productos.</p>
+    </div>
+
+
     <modal name="add-to-cart-modal" :adaptive=true :max-width="300" width="80%" height="auto" styles="border-radius: 10px;">
-      <!-- <div class="row"> -->
         <div style="display: flex; place-content: flex-end;">
           <button class="btn float-right" @click="$modal.hide('add-to-cart-modal')">
             <font-awesome-icon icon="times" />
           </button>
         </div>
         <div style="display: flex; flex-direction: column;align-items: center; padding: 25px;">
-          <img :src="this.productToAdd.url" style="width: 150px; height: 150px;">
+          <!-- <img :src="this.productToAdd.url" style="width: 150px; height: 150px;"> -->
           <p style="margin-top: 20px;">{{this.productToAdd.name}}</p>
           <div class="row" style="align-items: baseline;">
             <number-input v-model="productToAdd.quantity" :min="1" size="small" center inline controls></number-input>
           </div>
           <button type="button" class="btn btn-primary" style="margin-top: 20px;" @click="addProductToCart(productToAdd);$modal.hide('add-to-cart-modal');showToastProductAdded();">Agregar</button>
         </div>
-      <!-- </div> -->
     </modal>
   </div>
 </template>
@@ -60,8 +79,14 @@ export default {
   name: 'Home',
   computed: {
     filteredProducts() {
-      let namefilter = this.$store.state.products.all.filter(item => item.name.toLowerCase().search(this.searchText.toLowerCase()) !== -1)
-      let categoryfilter = namefilter.filter(item => item.categoria.toLowerCase().search(this.searchCategory.toLowerCase()) !== -1)
+      let namefilter = this.$store.state.products.all
+      if(this.searchText !== '')
+        namefilter = namefilter.filter(item => item.name.toLowerCase().search(this.searchText.toLowerCase()) !== -1)
+      
+      let categoryfilter = namefilter
+      if (this.searchCategory !== '')
+        categoryfilter = namefilter.filter(item => item.categoria.toLowerCase() == this.searchCategory.toLowerCase())
+
       return categoryfilter
     },
     categories() {
@@ -70,6 +95,17 @@ export default {
         categories_temp.indexOf(item.categoria) == -1 ? categories_temp.push(item.categoria) : ''
       })
       return categories_temp.sort()
+    },
+    searchTextInput: {
+      get() {
+        return this.searchText
+      },
+      set(val) {
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.searchText = val
+        }, 500)
+      }
     },
     ...mapState({
       products: state => state.products.all,
@@ -96,9 +132,6 @@ export default {
         singleton: 'true'
       })
     },
-    showFilters() {
-      this.boolShowFilters = !this.boolShowFilters
-    },
     ...mapActions('cart', [
       'addProductToCart'
     ])
@@ -113,11 +146,15 @@ export default {
       },
       searchText: '',
       searchCategory: '',
-      boolShowFilters: false
+      timeout: '',
     }
   },
   created () {
     this.$store.dispatch('products/getAllProducts')
+    if('category' in this.$route.params)
+      this.searchCategory = this.$route.params.category
+    else
+      this.searchCategory = ''
   }
 }
 </script>
@@ -149,8 +186,8 @@ export default {
   padding-bottom: 6px;
   position: fixed;
   width: 100%;
-  /* margin-bottom:10px; */
-  /* margin-bottom: 10px; */
+  margin-bottom:10px;
+  margin-bottom: 10px;
   box-shadow: 0 15px 20px -15px rgba(27, 33, 58, 0.4);
   z-index: 500;
 }
@@ -168,6 +205,12 @@ export default {
   box-shadow: 10px 10px 49px -9px rgba(0,0,0,0.75) !important;
   border-radius: 5px !important;
   width: 80%;
+}
+
+*:focus
+{
+    box-shadow: none !important;
+    border: solid 1px red( any color ) !important;
 }
 
 </style>

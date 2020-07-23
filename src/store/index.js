@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VuexPersistence from 'vuex-persist'
 import cart from './modules/cart'
 import products from './modules/products'
 
@@ -12,4 +13,5 @@ export default new Vuex.Store({
     cart,
     products
   },
+  plugins: [new VuexPersistence({modules: ['cart']}).plugin]
 })

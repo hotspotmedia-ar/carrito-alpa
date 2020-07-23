@@ -1,4 +1,4 @@
-import shop from '../../api/shop'
+// import shop from '../../api/shop'
 
 // initial state
 // shape: [{ id, quantity }]
@@ -10,41 +10,26 @@ const state = () => ({
 
 // getters
 const getters = {
-    cartProducts: (state, getters, rootState) => {
-        return state.items.map(({ id, quantity }) => {
-            const product = rootState.products.all.find(product => product.id === id)
-            return {
-                title: product.title,
-                price: product.price,
-                quantity
-            }
-        })
-    },
-  
-    cartTotalPrice: (state, getters) => {
-        return getters.cartProducts.reduce((total, product) => {
-            return total + product.price * product.quantity
-        }, 0)
-    }
+
 }
   
 // actions
 const actions = {
-    checkout ({ commit, state }, products) {
-        const savedCartItems = [...state.items]
-        commit('setCheckoutStatus', null)
-        // empty cart
-        commit('setCartItems', { items: [] })
-        shop.buyProducts(
-            products,
-            () => commit('setCheckoutStatus', 'successful'),
-            () => {
-            commit('setCheckoutStatus', 'failed')
-            // rollback to the cart saved before sending the request
-            commit('setCartItems', { items: savedCartItems })
-            }
-        )
-    },
+    // checkout ({ commit, state }, products) {
+    //     const savedCartItems = [...state.items]
+    //     commit('setCheckoutStatus', null)
+    //     // empty cart
+    //     commit('setCartItems', { items: [] })
+    //     shop.buyProducts(
+    //         products,
+    //         () => commit('setCheckoutStatus', 'successful'),
+    //         () => {
+    //         commit('setCheckoutStatus', 'failed')
+    //         // rollback to the cart saved before sending the request
+    //         commit('setCartItems', { items: savedCartItems })
+    //         }
+    //     )
+    // },
   
     addProductToCart ({ state, commit }, product) {
         commit('setCheckoutStatus', null)
@@ -61,8 +46,18 @@ const actions = {
         commit('removeCartItem', { product })
     },
 
+    clearCart ({ commit }) {
+        commit('clearCart')
+    },
+
     saveOrderNumber ({ commit }, order) {
         commit('saveOrder', order)
+    },
+
+    /*eslint no-unused-vars: [2, { "args": "none" }]*/
+    addQuantityToCart ({commit}, [product, quantity]) {
+        if( !(quantity < 0 && product.quantity<=1))
+            commit('addQuantity', {product, quantity})
     }
 
 }
@@ -91,14 +86,22 @@ const mutations = {
         let index = state.items.findIndex(item => item.id == product.id)
         state.items.splice(index, 1)
     },
+
+    clearCart (state) {
+        state.items = []
+    },
   
     setCheckoutStatus (state, status) {
         state.checkoutStatus = status
     },
 
     saveOrder (state, order) {
-        console.log(order)
         state.order = order
+    },
+
+    addQuantity (state, {product, quantity}) {
+        let index = state.items.findIndex(item => item.id == product.id)
+        state.items[index].quantity += quantity
     }
   }
   

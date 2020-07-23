@@ -1,0 +1,74 @@
+[
+    {
+        "zona": 1,
+        "nombre": "Escobar"
+    },
+    {
+        "zona": 1,
+        "nombre": "Loma Verde"
+    },
+    {
+        "zona": 2,
+        "nombre": "Río Lujan"
+    },
+    {
+        "zona": 2,
+        "nombre": "Campana"
+    },
+    {
+        "zona": 2,
+        "nombre": "Cardales"
+    },
+    {
+        "zona": 2,
+        "nombre": "Sakura"
+    },
+    {
+        "zona": 2,
+        "nombre": "Manzanares"
+    },
+    {
+        "zona": 2,
+        "nombre": "Pilar"
+    },
+    {
+        "zona": 2,
+        "nombre": "Del Viso"
+    },
+    {
+        "zona": 2,
+        "nombre": "Zavio"
+    },
+    {
+        "zona": 2,
+        "nombre": "Tigre"
+    },
+    {
+        "zona": 3,
+        "nombre": "Matheu"
+    },
+    {
+        "zona": 3,
+        "nombre": "Zelaya"
+    },
+    {
+        "zona": 3,
+        "nombre": "Villa Rosa"
+    },
+    {
+        "zona": 3,
+        "nombre": "Benavidez"
+    },
+    {
+        "zona": 3,
+        "nombre": "Ing. Masthcwitz"
+    },
+    {
+        "zona": 3,
+        "nombre": "Garín"
+    },
+    {
+        "zona": 4,
+        "nombre": "Otra"
+    }
+]

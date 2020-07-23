@@ -3,28 +3,37 @@
     <div id="nav" class="row vertical-center">
     
       <div class="col-2">
-        <router-link v-if="$router.currentRoute.name === 'Carrito'" to="/" class="float-left">
-          <font-awesome-icon icon="chevron-left" size="lg" />
-        </router-link>
-        <a class="float-left" v-if="$router.currentRoute.name !== 'Carrito'">
-          <font-awesome-icon icon="search" size="lg" @click="this.showFilters" />
-        </a>
+        <transition name="slide" mode="out-in">
+          <router-link v-if="$router.currentRoute.name == 'Carrito' || $router.currentRoute.name == 'Categorias'" to="/" class="float-left">
+            <font-awesome-icon icon="chevron-left" size="lg" />
+          </router-link>
+          <router-link v-else-if="$router.currentRoute.name == 'Tienda'" to="/categorias" class="float-left">
+            <font-awesome-icon icon="tags" size="lg" />
+          </router-link>
+          <router-link v-else-if="$router.currentRoute.name == 'Checkout'" to="/carrito" class="float-left">
+            <font-awesome-icon icon="chevron-left" size="lg" />
+          </router-link>
+        </transition>
       </div>
       <div class="col-8">
         <img src="https://papeleraalpa.com.ar/wp-content/uploads/2019/10/cropped-logo-alpa-2.png" height="40px" />
       </div>
       <div class="col-2">
-        <router-link v-if="$router.currentRoute.name !== 'Carrito'" to="/carrito" class="float-right align-middle">
-          <div style="position: relative">
-            <font-awesome-icon icon="shopping-cart" size="lg" />
-            <span class="badge badge-danger badge-cart pull-right" v-if="cartItemCount>0">{{cartItemCount}}</span>
-          </div>
-        </router-link>
+        <transition name="slide" mode="out-in">
+          <router-link v-if="$router.currentRoute.name == 'Tienda'" to="/carrito" class="float-right align-middle">
+            <div style="position: relative">
+              <font-awesome-icon icon="shopping-cart" size="lg" />
+              <span class="badge badge-danger badge-cart pull-right" v-if="cartItemCount>0">{{cartItemCount}}</span>
+            </div>
+          </router-link>
+        </transition>
       </div>
     </div>
 
     <div class="content">
-      <router-view ref="home"></router-view>
+      <transition name="slide" mode="out-in">
+        <router-view ref="home"></router-view>
+      </transition>
     </div>
 
   </div>
@@ -45,9 +54,6 @@ export default {
     })
   },
   methods: {
-    showFilters() {
-      this.$refs.home.showFilters()
-    },
     ...mapActions('cart', [
       'saveOrderNumber'
     ])
@@ -58,7 +64,7 @@ export default {
       this.saveOrderNumber(order)
     else
       window.close
-  }
+  },
 }
 </script>
 
@@ -69,13 +75,13 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
 }
 
 #nav {
   padding: 10px;
-  /* -webkit-box-shadow: 1px -183px 35px 159px rgba(0,0,0,0.63);
-  -moz-box-shadow: 1px -183px 35px 159px rgba(0,0,0,0.63);
-  box-shadow: 1px -183px 35px 159px rgba(0,0,0,0.63); */
   background-color: white;
   position: fixed;
   top: 0;
@@ -106,9 +112,23 @@ export default {
 }
 
 .content {
-  /* padding-top: 70px; */
   margin-left: 10px;
   margin-right: 10px;
+}
+
+
+
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: opacity .1s, transform .1s;
+}
+.slide-enter {
+  opacity: 1;
+}
+
+.slide-leave-to {
+  opacity: 0;
 }
 
 </style>

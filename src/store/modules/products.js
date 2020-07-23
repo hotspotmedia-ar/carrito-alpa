@@ -3,6 +3,7 @@ import shop from '../../api/shop'
 // initial state
 const state = () => ({
     all: [],
+    categories: [],
 })
   
 // getters
@@ -14,6 +15,11 @@ const actions = {
         shop.getProducts(products => {
             commit('setProducts', products)
         })
+    },
+    getAllCategories ({ commit }) {
+        shop.getCategories(categories => {
+            commit('setCategories', categories)
+        })
     }
 }
   
@@ -21,6 +27,9 @@ const actions = {
 const mutations = {
     setProducts (state, products) {
         state.all = products
+    },
+    setCategories (state, categories) {
+        state.categories = categories.sort((a,b) => (a.categoria > b.categoria) ? 1 : -1)
     },
 }
   
