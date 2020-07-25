@@ -66,7 +66,10 @@
           <div class="row" style="align-items: baseline;">
             <number-input v-model="productToAdd.quantity" :min="1" size="small" center inline controls></number-input>
           </div>
-          <button type="button" class="btn btn-primary" style="margin-top: 20px;" @click="addProductToCart(productToAdd);$modal.hide('add-to-cart-modal');showToastProductAdded();">Agregar</button>
+          <button type="button" class="btn btn-primary" style="margin-top: 20px;" @click="addProductToCart(productToAdd);$modal.hide('add-to-cart-modal');showToastProductAdded();">
+            <font-awesome-icon icon="cart-plus" size="lg"></font-awesome-icon>
+            <span style="font-weight: 600;margin-left: 10px;">Agregar al carrito</span>
+          </button>
         </div>
     </modal>
   </div>

@@ -7,7 +7,8 @@ import { BootstrapVue } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { library, dom } from '@fortawesome/fontawesome-svg-core'
-import { faShoppingCart, faChevronLeft, faTimes, faCartPlus, faTrash, faSearch, faTags, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import { faShoppingCart, faChevronLeft, faTimes, faCartPlus, faTrash, faSearch, faTags, faTimesCircle, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faTelegramPlane } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VModal from 'vue-js-modal'
 import VueNumberInput from '@chenfengyuan/vue-number-input';
@@ -20,7 +21,7 @@ import Vuelidate from 'vuelidate'
 import Multiselect from 'vue-multiselect'
  
 
-library.add(faShoppingCart, faChevronLeft, faTimes, faCartPlus, faTrash, faSearch, faTags, faTimesCircle)
+library.add(faShoppingCart, faChevronLeft, faTimes, faCartPlus, faTrash, faSearch, faTags, faTimesCircle, faTelegramPlane, faPlus)
 dom.watch()
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

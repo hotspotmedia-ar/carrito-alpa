@@ -1,8 +1,8 @@
 <template>
-  <div class="carrito" style="padding-top:60px;">
+  <div class="carrito" style="padding-top:70px;">
     <div v-if="this.cart.length > 0">
-
-      <div>
+      <h5>CARRITO</h5>
+      <div class="pt-2">
         <table class="table table-sm" id="cartProductsTable">
           <thead>
             <tr>
@@ -33,7 +33,10 @@
 
       <div class="row">
         <div class="col-12 float-center" style="margin-top: 30px; margin-bottom:80px;">
-          <button class="btn btn-primary" style="" @click="enviarPedido()">Enviar Pedido</button>
+          <button class="btn btn-primary" style="" @click="enviarPedido()">
+            <font-awesome-icon icon="shopping-cart" size="lg"></font-awesome-icon>
+            <span style="font-weight: 600;margin-left: 10px;">Enviar Pedido</span>
+          </button>
         </div>
       </div>
     </div>
