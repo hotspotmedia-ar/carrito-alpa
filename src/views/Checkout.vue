@@ -52,13 +52,13 @@
                         <multiselect aria-describedby="direccionFacturacion" v-model="direccionFacturacion" :options="direcciones" :showLabels="false"
                             placeholder="" :showNoResults="false" :searchable="false">
                             <template slot="singleLabel" slot-scope="props">
-                                <div class="option__desc" v-if="!props.option.adminDirecciones"><span class="option__title">{{ props.option.direccionLinea1 }}</span><span class="option__small" style="font-size: 10pt;"> - {{ props.option.direccionLinea2 }} - {{ props.option.direccionLinea3 }}</span></div>
+                                <div class="option__desc" v-if="!props.option.adminDirecciones"><span class="option__title">{{ props.option.direccionLinea1 }}</span><span class="option__small" style="font-size: 10pt;">&nbsp;<span class="text-muted">{{ props.option.direccionLinea2 }}</span><br><span class="text-muted">{{ props.option.direccionLinea3 }}</span></span></div>
                             </template>
                             <template slot="option" slot-scope="props">
-                                <div class="option__desc" v-if="!props.option.adminDirecciones"><span class="option__title">{{ props.option.direccionLinea1 }}</span><span class="option__small" style="font-size: 10pt;"> - {{ props.option.direccionLinea2 }} - {{ props.option.direccionLinea3 }}</span></div>
+                                <div class="option__desc" v-if="!props.option.adminDirecciones"><span class="option__title">{{ props.option.direccionLinea1 }}</span><span class="option__small" style="font-size: 10pt;">&nbsp;<span class="text-white">{{ props.option.direccionLinea2 }}</span><br><span>{{ props.option.direccionLinea3 }}</span></span></div>
                             </template>
                             <template slot="afterList">
-                                <div class="option__desc pt-1 pb-1" style="text-align: center; font-size: 10pt;" @click="showAdminDireccionesModal"><span class="option__title">Agregar / Eliminar</span></div>
+                                <div class="option__desc pt-1 pb-1" style="text-align: center; font-size: 10pt;" @click="showAdminDireccionesModal('direccionFacturacion')"><span class="option__title">Agregar / Eliminar</span></div>
                             </template>
                             <span slot="noOptions">No tienes direcciones registradas</span>
                         </multiselect>
@@ -73,13 +73,13 @@
                             <multiselect aria-describedby="direccionEntrega" v-model="direccionEntrega" :options="direcciones" :showLabels="false"
                                 placeholder="" :showNoResults="false" :searchable="false">
                                 <template slot="singleLabel" slot-scope="props">
-                                    <div class="option__desc" v-if="!props.option.adminDirecciones"><span class="option__title">{{ props.option.direccionLinea1 }}</span><span class="option__small" style="font-size: 10pt;"> - {{ props.option.direccionLinea2 }} - {{ props.option.direccionLinea3 }}</span></div>
+                                    <div class="option__desc" v-if="!props.option.adminDirecciones"><span class="option__title">{{ props.option.direccionLinea1 }}</span><span class="option__small" style="font-size: 10pt;">&nbsp;<span class="text-muted">{{ props.option.direccionLinea2 }}</span><br><span class="text-muted">{{ props.option.direccionLinea3 }}</span></span></div>
                                 </template>
                                 <template slot="option" slot-scope="props">
-                                    <div class="option__desc" v-if="!props.option.adminDirecciones"><span class="option__title">{{ props.option.direccionLinea1 }}</span><span class="option__small" style="font-size: 10pt;"> - {{ props.option.direccionLinea2 }} - {{ props.option.direccionLinea3 }}</span></div>
+                                    <div class="option__desc" v-if="!props.option.adminDirecciones"><span class="option__title">{{ props.option.direccionLinea1 }}</span><span class="option__small" style="font-size: 10pt;">&nbsp;<span class="text-white">{{ props.option.direccionLinea2 }}</span><br><span>{{ props.option.direccionLinea3 }}</span></span></div>
                                 </template>
                                 <template slot="afterList">
-                                    <div class="option__desc pt-1 pb-1" style="text-align: center; font-size: 10pt;" @click="showAdminDireccionesModal"><span class="option__title">Agregar / Eliminar</span></div>
+                                    <div class="option__desc pt-1 pb-1" style="text-align: center; font-size: 10pt;" @click="showAdminDireccionesModal('direccionEntrega')"><span class="option__title">Agregar / Eliminar</span></div>
                                 </template>
                                 <span slot="noOptions">No tienes direcciones registradas</span>
                             </multiselect>
@@ -97,11 +97,39 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary mt-3">
+                    <hr style="margin-top: 30px;margin-bottom: 25px;" />
+                    <!-- Envio sin stock? -->
+                    <div class="form-group">
+                        <p style="font-size: 10pt;">En el caso de que no tengamos stock de la totalidad del pedido, te lo entregamos igual?</p>
+                        <!-- <small>En el caso de que no tengamos stock de la totalidad del pedido, te lo entregamos igual?</small> -->
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-sm" :class="{'btn-primary': (envioSinStock == 'SI')}" style="border: #ced4da 1px solid">
+                                <input type="radio" autocomplete="off" @click="envioSinStock = 'SI'"> SI
+                            </label>
+                            <label class="btn btn-sm" :class="{'btn-primary': (envioSinStock == 'NO')}" style="border: #ced4da 1px solid">
+                                <input type="radio" autocomplete="off" @click="envioSinStock = 'NO'"> NO
+                            </label>
+                        </div>
+                        <div v-if="$v.envioSinStock.$error && formSubmitted">
+                            <small class="d-block text-left text-danger" v-if="!$v.envioSinStock.required">Debes elegir una opción</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3" v-if="!sending">
                         <font-awesome-icon :icon="['fab', 'telegram-plane']" size="lg"></font-awesome-icon>
                         <span style="font-weight: 600;margin-left: 10px;">Enviar</span>    
                     </button>
+                    <button type="button" class="btn btn-primary mt-3 disabled" v-else disabled>
+                        <font-awesome-icon icon="sync-alt" spin size="lg"></font-awesome-icon>
+                        <span style="font-weight: 600;margin-left: 10px;">Enviando... </span>    
+                    </button>
                 </form>
+            </div>
+
+            <div class="col-12 mt-5 mb-5">
+                <a target="_blank" href="http://www.hotspotmedia.com.ar" style="text-decoration: none; color: #2c3e50;">
+                    <span>Desarrollado por </span><img src="../assets/hotspot-logo.png" style="height: 35px; margin-top: -11px;" />
+                </a>
             </div>
         </div>
 
@@ -158,8 +186,11 @@ export default {
             copiarDireccionEntrega: false,
             localidad: '',
             localidades: localidades,
+            envioSinStock: '',
             formSubmitted: false,
-            boolAgregarDireccion: false
+            boolAgregarDireccion: false,
+            sending: false,
+            campoDireccionAgregando: '',
         }
     },
     methods: {
@@ -187,7 +218,7 @@ export default {
             if (this.$v.$invalid) {
                 return;
             } else {
-                let text = '<b>'+this.localidadTiempoEntrega()+'</b><br><br>Si corresponde, las entregas se realizarán de un día para el otro siempre y cuando el pedido haya ingresado antes de las 16hs.'
+                let text = '<b>'+this.localidadTiempoEntrega()+'</b><br><br>Si corresponde, las entregas se realizarán de un día para el otro siempre y cuando el pedido haya ingresado antes de las 16hs.<br><br>Si su pedido es inferior a $1000, se le cobrará un adicional de $80 por el envío.'
                 let formData = {
                     'carrito': this.cart,
                     'nombre': this.nombre,
@@ -196,29 +227,35 @@ export default {
                     'direccion_facturacion': this.direccionFacturacion,
                     'direccion_entrega': this.direccionEntrega,
                     'localidad': this.localidad,
+                    'envio_sin_stock': this.envioSinStock
                 }
                 this.$confirm(text, "", "warning", {confirmButtonText: 'De acuerdo', cancelButtonText: 'Cancelar', html: text}).then(() => {
+                    this.sending = true
                     this.axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-                    this.axios.post("gracias.php", formData)
+                    this.axios.post("https://server.hotspotmedia.com.ar/alpa/carrito/gracias.php", formData, { withCredentials: true } )
                     .then(response => {
                     if(response.data.estado == "ok")
                     {
                         this.clearCart()
+                        this.sending = false
                         this.$alert("Su pedido fue enviado correctamente!", "Éxito", "success")
-                        .then(() => window.location = "https://wa.me/5491169987211");
+                        .then(() => window.location = "https://wa.me/5491156435252");
                     }
                     else
                     {
+                        this.sending = false
                         this.$alert("Ha ocurrido un error, intente nuevamente.", "Error", "warning");
                     }
                     })
                     .catch(() => { 
+                        this.sending = false
                         this.$alert("Ha ocurrido un error, intente nuevamente.", "Error", "warning");
                      });
                 }).catch((e) => { return e });  
             }
         },
-        showAdminDireccionesModal() {
+        showAdminDireccionesModal(campoDireccion) {
+            this.campoDireccionAgregando = campoDireccion
             this.$modal.show('admin-direcciones')
         },
         agregarDireccion() {
@@ -229,6 +266,7 @@ export default {
                 direccionLinea3: this.newDireccion.direccionLinea3,
                 codigoPostal: this.newDireccion.codigoPostal,
             })
+            this[this.campoDireccionAgregando] = this.newDireccion
             this.newDireccion = {
                 direccionLinea1: '',
                 direccionLinea2: '',
@@ -303,6 +341,9 @@ export default {
                 },
                 localidad: {
                     required
+                },
+                envioSinStock: {
+                    required
                 }
             }
         } else {
@@ -323,6 +364,9 @@ export default {
                     required
                 },
                 localidad: {
+                    required
+                },
+                envioSinStock: {
                     required
                 }
             }

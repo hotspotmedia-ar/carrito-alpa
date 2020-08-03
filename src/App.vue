@@ -20,7 +20,7 @@
       </div>
       <div class="col-2">
         <transition name="slide" mode="out-in">
-          <router-link v-if="$router.currentRoute.name == 'Tienda'" to="/carrito" class="float-right align-middle">
+          <router-link v-if="$router.currentRoute.name == 'Tienda' || $router.currentRoute.name == 'Categorias'" to="/carrito" class="float-right align-middle">
             <div style="position: relative">
               <font-awesome-icon icon="shopping-cart" size="lg" />
               <span class="badge badge-danger badge-cart pull-right" v-if="cartItemCount>0">{{cartItemCount}}</span>
