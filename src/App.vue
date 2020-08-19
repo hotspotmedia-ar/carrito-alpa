@@ -78,6 +78,7 @@ export default {
 
   -ms-touch-action: manipulation;
   touch-action: manipulation;
+  
 }
 
 #nav {
@@ -114,6 +115,7 @@ export default {
 .content {
   margin-left: 10px;
   margin-right: 10px;
+  overflow-x: hidden;
 }
 
 

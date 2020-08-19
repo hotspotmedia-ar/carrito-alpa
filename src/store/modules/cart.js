@@ -35,7 +35,7 @@ const actions = {
         commit('setCheckoutStatus', null)
         const cartItem = state.items.find(item => item.id === product.id)
         if (!cartItem) {
-            commit('pushProductToCart', { id: product.id, name: product.name, url: product.url, quantity: product.quantity })
+            commit('pushProductToCart', { id: product.id, name: product.name, url: product.url, quantity: product.quantity, quantityType: product.quantityType})
         }
         else {
             commit('addQuantityToCart', { id: product.id, quantity: product.quantity })
@@ -64,12 +64,13 @@ const actions = {
   
 // mutations
 const mutations = {
-    pushProductToCart (state, { id, name, url, quantity }) {
+    pushProductToCart (state, { id, name, url, quantity, quantityType }) {
         state.items.push({
             id,
             name,
             url,
             quantity,
+            quantityType,
         })
     },
 

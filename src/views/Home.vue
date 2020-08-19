@@ -53,6 +53,12 @@
       <p class="align-self-center" style="margin-top: 15px; font-size: 18px;">No se encontraron productos.</p>
     </div>
 
+    <!-- float button 'Ver carrito' -->
+    <div class="btn btn-primary" style="position: fixed; bottom: 10px; left: 50%; right: 50%; transform: translateX(-50%); width: 200px; border-radius: 5px; margin-bottom: 10px; font-weight: 600;-webkit-box-shadow: 0px 0px 105px -39px rgba(0,0,0,0.75);-moz-box-shadow: 0px 0px 105px -39px rgba(0,0,0,0.75);box-shadow: 0px 0px 105px -39px rgba(0,0,0,0.75);"
+      @click="$router.push({ name: 'Carrito' })">
+      <font-awesome-icon icon="shopping-cart" size="lg"></font-awesome-icon> Ver carrito
+    </div>
+
 
     <modal name="add-to-cart-modal" :adaptive=true :max-width="300" width="80%" height="auto" styles="border-radius: 10px;">
         <div style="display: flex; place-content: flex-end;">
@@ -66,7 +72,23 @@
           <div class="row" style="align-items: baseline;">
             <number-input v-model="productToAdd.quantity" :min="1" size="small" center inline controls></number-input>
           </div>
-          <button type="button" class="btn btn-primary" style="margin-top: 20px;" @click="addProductToCart(productToAdd);$modal.hide('add-to-cart-modal');showToastProductAdded();">
+          <div style="margin-top: 20px;">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-sm" :class="{'btn-primary': (productToAdd.quantityType == 'bultos')}" style="border: #ced4da 1px solid">
+                  <input type="radio" autocomplete="off" @click="productToAdd.quantityType = 'bultos'; formError = false"> BULTOS
+              </label>
+              <label class="btn btn-sm" :class="{'btn-primary': (productToAdd.quantityType == 'unidades')}" style="border: #ced4da 1px solid">
+                  <input type="radio" autocomplete="off" @click="productToAdd.quantityType = 'unidades'; formError = false"> UNIDADES
+              </label>
+            </div>
+          <p style="font-size: 10pt; margin-top: 5px;">{{productToAdd.quantityTypeDescription}}</p>
+          </div>
+
+          <b-alert :show="this.formError" variant="danger" style="margin-top: 10px;margin-bottom: 0;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;font-size:9pt;">
+            Debes seleccionar bultos o unidades
+          </b-alert>
+
+          <button type="button" class="btn btn-primary" style="margin-top: 20px;" @click="validateAddModal()">
             <font-awesome-icon icon="cart-plus" size="lg"></font-awesome-icon>
             <span style="font-weight: 600;margin-left: 10px;">Agregar al carrito</span>
           </button>
@@ -121,6 +143,8 @@ export default {
       this.productToAdd.name = product.name
       this.productToAdd.url = product.url
       this.productToAdd.quantity = 1
+      this.productToAdd.quantityType = ''
+      this.productToAdd.quantityTypeDescription = product.quantityTypeDescription
       this.$modal.show('add-to-cart-modal');
     },
     showToastProductAdded() {
@@ -135,6 +159,17 @@ export default {
         singleton: 'true'
       })
     },
+    validateAddModal() {
+      if(this.productToAdd.quantityType == '')
+      {
+        this.formError = true
+      }
+      else{
+        this.addProductToCart(this.productToAdd)
+        this.$modal.hide('add-to-cart-modal')
+        this.showToastProductAdded();
+      }
+    },
     ...mapActions('cart', [
       'addProductToCart'
     ])
@@ -145,11 +180,13 @@ export default {
         id: 0,
         name: '',
         url: '',
-        quantity: 1
+        quantity: 1,
+        quantityType: '',
       },
       searchText: '',
       searchCategory: '',
       timeout: '',
+      formError: false
     }
   },
   created () {
